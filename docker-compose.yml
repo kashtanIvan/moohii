@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  php:
+    container_name: "moohii_php"
+    build:
+      context: "./.docker/php"
+      dockerfile: "Dockerfile"
+    volumes:
+      - ./:/var/www/project
+    depends_on:
+      - db
+
+  nginx:
+    container_name: "moohii_nginx"
+    build:
+      context: "./.docker/nginx"
+      dockerfile: "Dockerfile"
+    volumes:
+    - ./:/var/www/project
+    ports:
+    - 80:80
+    depends_on:
+      - php
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=moohii
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=moohii
+    ports:
+    - 54320:5432
